@@ -1,31 +1,40 @@
 package com.korea.user.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
-
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Data
 @Entity
 @Table(name="users")
 public class UserEntity {
+//	idx(primary key)
+//	userId (unique)
+//	pwd
+//	name(진짜 이름)
+//	email
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	//GenerationType.AUTO
-	//데이터베이스에 따라서 자동으로 생성하는 규칙
-	//H2와 같은 내장 데이터베이스를 사용하는 경우, 기본적으로 숫자 값이 증가하는 방식으로 id가 설정된다.
-	private int id;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	//idx 유저에게 부여되는 고유번호
+	private int idx;
+	
+	//unique 제약조건, not null 제약조건
+	@Column(unique = true, nullable = false)
+	private String userId;
+	private String pwd;
 	private String name;
 	private String email;
-
+	
+	
 }

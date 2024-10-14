@@ -6,61 +6,51 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-
 import com.korea.user.dto.UserDTO;
 import com.korea.user.model.UserEntity;
 import com.korea.user.persistence.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserService {
-
-	private final UserRepository repository;
 	
-	public List<UserDTO> create(UserEntity entity){
+	private final UserRepository userRepository;
+	
+	//id 중복체크메서드
+	//id를 db로 전달해서 조회가 되면 false, 조회가 안되면 true를 반환
+	//true면 아이디 생성 가능, false면 아이디 생성 불가능
+	
+	public boolean isIdDuplicated(String id) {
 		
-		//사용자 생성
-		//컨트롤러로부터 이름과 이메일이 담겨있는 Entity를 넘겨받는다.
-		//db에 추가를 한 후, 추가가 잘 됐는지 조회를 한 데이터를 컨트롤러로 넘겨야 한다.
-		repository.save(entity);//데이터베이스에 저장
-		//List<UserEntity> -> List<UserDTO> 로 변환
-		return repository.findAll().stream().map(UserDTO::new).collect(Collectors.toList());
+		Optional<UserEntity> user = userRepository.findByUserId(id);
+		return !user.isPresent();// 조회되면 true
 	}
 	
-	public List<UserDTO> getAllUsers(){
-		return repository.findAll().stream().map(UserDTO::new).collect(Collectors.toList());
-	}
-	
-	public UserDTO getUserByEmail(String email){
-		UserEntity entity = repository.findByEmail(email);
-		return new UserDTO(entity);
-	}
-	
-	public List<UserDTO> updateUser(UserEntity entity){
-		//id를 통해서 db에 저장되어있는 객체를 찾는다.
-		Optional<UserEntity> original = repository.findById(entity.getId());
-		original.ifPresent(userEntity ->{
-			//이름과 이메일을 객체에 setting을 한다.
-			userEntity.setEmail(entity.getEmail());
-			userEntity.setName(entity.getName());
-			//업데이트된 사용자 정보 저장
-			repository.save(userEntity);
-		});
-		return getAllUsers();
-	}
-	
-	public boolean deleteUser(int id){
-		//id를 통해 유저가 존재하는지 먼저 확인
-		Optional<UserEntity> exist = repository.findById(id);
+	public List<UserDTO> insert(UserDTO dto) {
 		
-		if(exist.isPresent()) {
-			repository.deleteById(id);
-			return true;
-		}else {
-			return false;
-		}
+		UserEntity entity = UserDTO.toEntity(dto);
+		
+		userRepository.save(entity);
+		
+		return userRepository.findAll().stream().map(UserDTO::new).collect(Collectors.toList());
+		
+	}
+	
+	//유저 전체조회
+	public List<UserDTO> allUsers(){
+		List<UserDTO> list = userRepository.findAll().stream().map(UserDTO::new).collect(Collectors.toList());
+		return list;
+	}
+	
+	//로그인
+	//아이디랑 비밀번호를 받는다.
+	
+	public UserEntity getByCredential(String userId, String pwd) {
+		return userRepository.findByuserIdAndPwd(userId,pwd);
 	}
 	
 }
