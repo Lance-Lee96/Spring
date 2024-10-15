@@ -38,7 +38,7 @@ public class WebSecurityConfig {
          .authorizeHttpRequests(authorizeRequestsConfigurer -> 
             authorizeRequestsConfigurer
             // "/users/**", "/auth/**" 는 인증 없이 접근 가능하다
-            .requestMatchers("/users/**", "/auth/**","/").permitAll()
+            .requestMatchers("/users/signup", "/auth/**","/","/users/signin","/users/idCheck","/users/MyInfo").permitAll()
             // 그 이외의 것들은 토큰 인증을 받아야한다.
             .anyRequest().authenticated()
          );

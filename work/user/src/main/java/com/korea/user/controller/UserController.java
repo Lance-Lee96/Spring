@@ -1,11 +1,13 @@
 package com.korea.user.controller;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,7 +28,11 @@ public class UserController {
 	private final TokenProvider tokenProvider;
 	
 	//id중복조회
-	@GetMapping("/idCheck")
+	@PostMapping("/idCheck")
+	//POST,PUT,DELETE로 전달하면 데이터들이 RequestBody로 전송
+	//GET으로 전달할 때는 RequestBody로 전송되지 않음
+	//localhost:9090/users/idCheck?userId='xx'
+//	public ResponseEntity<?> isIdDuplicated(@RequestParam("userId") UserDTO dto) {
 	public ResponseEntity<?> isIdDuplicated(@RequestBody UserDTO dto) {
 		boolean check = userService.isIdDuplicated(dto.getUserId());
 		ResponseDTO<Boolean> response = ResponseDTO.<Boolean>builder().value(check).build();
@@ -71,5 +77,33 @@ public class UserController {
 			return ResponseEntity.badRequest().body(responseDTO);
 			
 		}
+		
 	}
+	
+	@GetMapping("name")
+	//@RequestHeader : HTTP 요청헤더 값을 컨트롤러의 메서드에 주입하는데 사용되는 어노테이
+	public ResponseEntity<?> getUserName(@RequestHeader ("Authorization") String token){
+		// "Bearer " 제거
+		String actualToken = token.substring(7);
+		
+		//JWT에서 유저 id 추출
+		String userId = tokenProvider.validateAndeGetUserId(actualToken);
+		
+		//select * from users where userId='';
+		UserEntity entity = userService.getUserName(userId);
+		
+		UserDTO dto = new UserDTO(entity);
+		
+		List<UserDTO> dtos = Arrays.asList(dto);
+		
+		ResponseDTO<UserDTO> response = ResponseDTO.<UserDTO>builder().data(dtos).build();
+		return ResponseEntity.ok().body(response);
+				
+//		System.out.println(userId); -> id를 통해 유저를 검색
+	       
+	     //ResponseDTO<String> response = ResponseDTO.<String>builder().value(dto.getToken()).build();
+	     //return ResponseEntity.ok().body(response);
+	   }
+	
+	
 }
