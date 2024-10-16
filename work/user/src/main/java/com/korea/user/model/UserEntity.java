@@ -12,29 +12,24 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @Data
-@Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name="users")
+@Entity
 public class UserEntity {
-//	idx(primary key)
-//	userId (unique)
-//	pwd
-//	name(진짜 이름)
-//	email
+	
+	//idx 유저에게 부여되는 고유번호
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	//idx 유저에게 부여되는 고유번호
 	private int idx;
 	
 	//unique 제약조건, not null 제약조건
-	@Column(unique = true, nullable = false)
+	@Column(unique=true, nullable = false)
 	private String userId;
+	
 	private String pwd;
 	private String name;
 	private String email;
-	
-	
 }

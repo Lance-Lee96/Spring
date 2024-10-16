@@ -1,0 +1,3 @@
+car=ex02.SportCar
+truck=ex02.Truck
+engine=ex02.Engine

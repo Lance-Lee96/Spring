@@ -7,10 +7,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+//속성
+//token
+//idx
+//id
+//pwd
+//name
+//email
+
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDTO {
 
 	private String token;
@@ -37,5 +45,10 @@ public class UserDTO {
 				.email(dto.getEmail())
 				.build();
 	}
+	
+	
+	
+	
+	
+	
 }
-

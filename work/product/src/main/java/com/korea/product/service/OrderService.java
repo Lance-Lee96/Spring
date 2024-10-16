@@ -39,11 +39,12 @@ public class OrderService {
 		//productId와 productCount
 		
 		//상품 존재여부를 확인
-		//SELECT * FROM PRODUCT;
+		//SELECT * FROM PRODUCT WHERE PRODUCTID='';
 		Optional<ProductEntity> option = productRepository.findById(dto.getProductId());
 		ProductEntity productEntity;
 		
 		//상품이 조회가 되면
+		//option.isPresent() : 있으면 TRUE 없으면 FALSE
 		if(option.isPresent()) {
 			//엔티티를 저장
 			productEntity = option.get();
@@ -77,6 +78,8 @@ public class OrderService {
 									.map(entity ->new ProductDTO(entity))
 									.collect(Collectors.toList());
 		
+		//반환하는 내용
+		//감소된 재고를 반영한 전체 내용
 		return dtos;
 		
 		
